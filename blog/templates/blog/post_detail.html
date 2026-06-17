@@ -1,0 +1,59 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <h1>{{ post.title }}</h1>
+        <div>
+            <a href="{% url 'post_update' post.pk %}" class="btn btn-primary">Edit</a>
+            <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger">Delete</a>
+        </div>
+    </div>
+    <p style="color:#777; margin-bottom:20px;">
+        <strong>Category:</strong> {{ post.category.name }} |
+        <strong>Status:</strong>
+        <span class="badge {% if post.status == 'published' %}badge-published{% else %}badge-draft{% endif %}">
+            {{ post.get_status_display }}
+        </span> |
+        <strong>Created:</strong> {{ post.created_date|date:"M d, Y H:i" }} |
+        <strong>Updated:</strong> {{ post.updated_date|date:"M d, Y H:i" }}
+    </p>
+    <hr style="margin-bottom:20px; border:none; border-top:1px solid #eee;">
+    <div style="line-height:1.8; font-size:16px;">
+        {{ post.content|linebreaks }}
+    </div>
+</div>
+
+<!-- Related Posts -->
+{% if related_posts %}
+<div class="card">
+    <h2 style="margin-bottom:15px;">Related Posts</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rpost in related_posts %}
+            <tr>
+                <td><a href="{% url 'post_detail' rpost.pk %}">{{ rpost.title }}</a></td>
+                <td>
+                    <span class="badge {% if rpost.status == 'published' %}badge-published{% else %}badge-draft{% endif %}">
+                        {{ rpost.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ rpost.created_date|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+
+<a href="{% url 'post_list' %}" class="btn btn-secondary">← Back to Posts</a>
+{% endblock %}

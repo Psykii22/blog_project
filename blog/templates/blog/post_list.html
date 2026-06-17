@@ -1,0 +1,82 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}All Posts{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>All Posts</h1>
+    <a href="{% url 'post_create' %}" class="btn btn-primary">+ New Post</a>
+</div>
+
+<!-- Search and Filters -->
+<form method="GET" class="filters">
+    <input type="text" name="search" placeholder="Search posts..." value="{{ search }}">
+    <select name="category">
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if selected_category == cat.id|stringformat:"d" %}selected{% endif %}>{{ cat.name }}</option>
+        {% endfor %}
+    </select>
+    <select name="status">
+        <option value="">All Status</option>
+        <option value="draft" {% if selected_status == "draft" %}selected{% endif %}>Draft</option>
+        <option value="published" {% if selected_status == "published" %}selected{% endif %}>Published</option>
+    </select>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="{% url 'post_list' %}" class="btn btn-secondary">Clear</a>
+</form>
+
+<!-- Posts Table -->
+<div class="card">
+    {% if posts %}
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Created Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for post in posts %}
+            <tr>
+                <td><a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a></td>
+                <td>{{ post.category.name }}</td>
+                <td>
+                    <span class="badge {% if post.status == 'published' %}badge-published{% else %}badge-draft{% endif %}">
+                        {{ post.get_status_display }}
+                    </span>
+                </td>
+                <td>{{ post.created_date|date:"M d, Y" }}</td>
+                <td>
+                    <a href="{% url 'post_update' post.pk %}" class="btn btn-primary" style="padding:5px 10px; font-size:12px;">Edit</a>
+                    <a href="{% url 'post_delete' post.pk %}" class="btn btn-danger" style="padding:5px 10px; font-size:12px;">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="text-align:center; padding:40px; color:#999;">No posts found.</p>
+    {% endif %}
+</div>
+
+<!-- Pagination -->
+{% if is_paginated %}
+<div class="pagination">
+    {% if page_obj.has_previous %}
+        <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Prev</a>
+    {% endif %}
+
+    <span class="current">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+    {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if selected_category %}&category={{ selected_category }}{% endif %}{% if selected_status %}&status={{ selected_status }}{% endif %}">Last</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

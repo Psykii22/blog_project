@@ -1,0 +1,35 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Categories</h1>
+    <a href="{% url 'category_create' %}" class="btn btn-primary">+ New Category</a>
+</div>
+
+<div class="card">
+    {% if categories %}
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Posts Count</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for category in categories %}
+            <tr>
+                <td><strong>{{ category.name }}</strong></td>
+                <td>{{ category.posts.count }}</td>
+                <td>{{ category.created_date|date:"M d, Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p style="text-align:center; padding:40px; color:#999;">No categories yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}Delete Post{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align:center; padding:40px;">
+    <h1 style="color:#e74c3c; margin-bottom:20px;">Delete Post</h1>
+    <p style="font-size:18px; margin-bottom:10px;">Are you sure you want to delete:</p>
+    <p style="font-size:22px; font-weight:bold; margin-bottom:30px;">"{{ object.title }}"</p>
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+        <a href="{% url 'post_list' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
